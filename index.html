@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Modern & Simple AI Chatbot Web App" />
+    <title>Gratzis ChatBot - Modern AI Assistant</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Global Error Failsafe Handler -->
+    <script>
+      window.addEventListener('error', function(e) {
+        var root = document.getElementById('root');
+        if (root) {
+          root.innerHTML = '<div style="padding: 24px; color: #ef4444; background: #0f172a; font-family: monospace; height: 100vh; overflow: auto; box-sizing: border-box;">' +
+            '<h2 style="margin-bottom: 12px;">⚠️ Application Boot Error</h2>' +
+            '<div style="color: #f8fafc; margin-bottom: 12px; font-weight: bold;">' + (e.message || e.toString()) + '</div>' +
+            '<pre style="white-space: pre-wrap; font-size: 0.8rem; color: #94a3b8; background: #1e293b; padding: 12px; border-radius: 8px;">Source: ' + (e.filename || 'unknown') + ':' + (e.lineno || 0) + ':' + (e.colno || 0) + '\n\n' + (e.error && e.error.stack ? e.error.stack : '') + '</pre>' +
+            '</div>';
+        }
+      });
+      window.addEventListener('unhandledrejection', function(e) {
+        var root = document.getElementById('root');
+        if (root) {
+          root.innerHTML = '<div style="padding: 24px; color: #ef4444; background: #0f172a; font-family: monospace; height: 100vh; overflow: auto; box-sizing: border-box;">' +
+            '<h2 style="margin-bottom: 12px;">⚠️ Unhandled Promise Rejection</h2>' +
+            '<div style="color: #f8fafc; margin-bottom: 12px; font-weight: bold;">' + (e.reason ? (e.reason.message || e.reason.toString()) : 'Unknown promise rejection') + '</div>' +
+            '</div>';
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <div style="height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; background-color: #090d16; color: #10b981; font-family: sans-serif;">
+        <div style="text-align: center;">
+          <div style="font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;">⚡ Gratzis ChatBot</div>
+          <div style="font-size: 0.9rem; color: #94a3b8;">Loading App Workspace...</div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
