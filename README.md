@@ -1,6 +1,6 @@
 # ⚡ Gratzis ChatBot
 
-A modern, fast, and simple AI Chatbot Web Application built with React, Vite, and Vanilla CSS. Featuring Client-Side AES-256-GCM encrypted Cloud Storage Sync.
+A modern, fast, and simple AI Chatbot Web Application built with React, Vite, and Vanilla CSS.
 
 
 ---
@@ -55,7 +55,6 @@ npm run build
 
 ## 🔒 Security & Privacy
 - **Zero-Local History**: Chat sessions are stored in browser `sessionStorage` and automatically cleared when the browser tab closes.
-- **AES-256-GCM Encryption**: Cloud storage backup files are encrypted client-side using Web Crypto API (`window.crypto.subtle`) with PBKDF2 key derivation.
 
 ---
 

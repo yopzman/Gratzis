@@ -8,35 +8,22 @@ import {
   Trash2, 
   Sparkles, 
   Bot,
-  Check,
-  Cloud,
-  Upload as CloudUpload,
-  Download as CloudDownload,
-  HardDrive,
-  ShieldAlert,
-  CheckCircle2,
-  Lock,
-  ShieldCheck
+  Check
 } from 'lucide-react';
 
-import { cryptoService } from '../services/cryptoService.js';
 
 export default function SettingsModal({
   isOpen,
   onClose,
   settings,
   personas,
-  cloudConfig,
   sessions,
   onSaveSettings,
-  onSavePersonas,
-  onSaveCloudConfig,
-  onRestoreSessions
+  onSavePersonas
 }) {
-  const [activeTab, setActiveTab] = useState('general'); // 'general' | 'personas' | 'cloud'
+  const [activeTab, setActiveTab] = useState('general'); // 'general' | 'personas'
   const [localSettings, setLocalSettings] = useState(settings || {});
   const [localPersonas, setLocalPersonas] = useState(Array.isArray(personas) ? personas : []);
-  const [localCloudConfig, setLocalCloudConfig] = useState(cloudConfig || {});
 
   // New Persona Form State
   const [showAddForm, setShowAddForm] = useState(false);
@@ -46,9 +33,6 @@ export default function SettingsModal({
     description: '',
     systemPrompt: ''
   });
-
-  // Cloud Account State
-  const [cloudEmail, setCloudEmail] = useState(cloudConfig?.accountEmail || '');
 
   if (!isOpen) return null;
 
@@ -100,101 +84,8 @@ export default function SettingsModal({
     }
   };
 
-  // Connect Google Drive Cloud
-  const handleConnectCloud = () => {
-    if (!cloudEmail.trim()) {
-      alert("Please enter a valid Google Account email.");
-      return;
-    }
-    const updated = {
-      ...localCloudConfig,
-      connected: true,
-      accountEmail: cloudEmail.trim(),
-      lastSyncedAt: new Date().toISOString()
-    };
-    setLocalCloudConfig(updated);
-    onSaveCloudConfig(updated);
-  };
-
-  const handleDisconnectCloud = () => {
-    const updated = {
-      ...localCloudConfig,
-      connected: false,
-      accountEmail: '',
-      lastSyncedAt: null
-    };
-    setLocalCloudConfig(updated);
-    onSaveCloudConfig(updated);
-  };
-
-  // Sync to Cloud Storage / Download AES-256 Encrypted Backup
-  const handleBackupToCloud = async () => {
-    if (!sessions || sessions.length === 0) {
-      alert("No active chat sessions to backup.");
-      return;
-    }
-
-    try {
-      // Encrypt session data using Web Crypto API (AES-GCM 256-bit)
-      const encryptedPayload = await cryptoService.encryptData(sessions);
-
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(encryptedPayload, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `gratzis_cloud_encrypted_backup_${Date.now()}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-
-      const updated = {
-        ...localCloudConfig,
-        lastSyncedAt: new Date().toISOString()
-      };
-      setLocalCloudConfig(updated);
-      onSaveCloudConfig(updated);
-      alert("🔒 Backup encrypted (AES-256-GCM) and downloaded successfully!");
-    } catch (err) {
-      alert("Error encrypting backup: " + err.message);
-    }
-  };
-
-  // Restore Cloud Backup File (Supports AES-256 Encrypted or Legacy JSON)
-  const handleRestoreFromCloud = (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      try {
-        const rawContent = JSON.parse(e.target.result);
-        let restoredSessions = [];
-
-        if (rawContent && rawContent.encrypted && rawContent.ciphertext) {
-          // Decrypt Web Crypto AES-GCM Encrypted Backup
-          restoredSessions = await cryptoService.decryptData(rawContent);
-        } else if (Array.isArray(rawContent)) {
-          // Legacy unencrypted JSON format support
-          restoredSessions = rawContent;
-        } else {
-          throw new Error("Invalid session backup file format.");
-        }
-
-        if (Array.isArray(restoredSessions)) {
-          onRestoreSessions(restoredSessions);
-          alert(`🔓 Successfully decrypted & restored ${restoredSessions.length} session(s) from Cloud backup!`);
-        } else {
-          alert("Invalid session backup data format.");
-        }
-      } catch (err) {
-        alert("Failed to decrypt backup file: " + err.message);
-      }
-    };
-    reader.readAsText(file);
-  };
-
   const handleSave = () => {
     onSaveSettings(localSettings);
-    onSaveCloudConfig(localCloudConfig);
     onClose();
   };
 
@@ -205,7 +96,7 @@ export default function SettingsModal({
         <div className="modal-header">
           <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Sliders size={20} style={{ color: 'var(--accent-primary)' }} />
-            <span>Settings & Cloud Storage Sync</span>
+            <span>Settings</span>
           </div>
           <button className="icon-btn" onClick={onClose}>
             <X size={18} />
@@ -249,23 +140,6 @@ export default function SettingsModal({
           >
             <UserCheck size={15} />
             <span>Personas ({localPersonas.length})</span>
-          </button>
-          <button
-            style={{
-              padding: '12px 14px',
-              fontSize: '0.85rem',
-              fontWeight: 600,
-              color: activeTab === 'cloud' ? 'var(--accent-primary)' : 'var(--text-tertiary)',
-              borderBottom: activeTab === 'cloud' ? '2px solid var(--accent-primary)' : '2px solid transparent',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 6
-            }}
-            onClick={() => setActiveTab('cloud')}
-          >
-            <Cloud size={15} />
-            <span>Cloud Storage Sync</span>
           </button>
         </div>
 
@@ -516,177 +390,6 @@ export default function SettingsModal({
                     </div>
                   );
                 })}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'cloud' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {/* Privacy Notice Banner */}
-              <div style={{
-                backgroundColor: 'var(--accent-light)',
-                border: '1px solid var(--accent-border)',
-                borderRadius: 'var(--radius-md)',
-                padding: 14,
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: 10
-              }}>
-                <ShieldAlert size={20} style={{ color: 'var(--accent-primary)', flexShrink: 0, marginTop: 2 }} />
-                <div style={{ fontSize: '0.82rem', color: 'var(--text-primary)', lineHeight: 1.5 }}>
-                  <strong>Strict Zero-Local Storage Mode Active</strong>: Chat sessions are held temporarily in browser <em>sessionStorage</em> and are automatically erased when the browser tab is closed. Use Cloud Storage below to securely back up or restore your conversations.
-                </div>
-              </div>
-
-              {/* Cloud Account Sync Card */}
-              <div style={{
-                backgroundColor: 'var(--bg-app)',
-                border: '1px solid var(--border-medium)',
-                borderRadius: 'var(--radius-md)',
-                padding: 16,
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 12
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: '0.9rem' }}>
-                    <HardDrive size={18} style={{ color: 'var(--accent-primary)' }} />
-                    <span>Google Drive Integration</span>
-                  </div>
-
-                  <span style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    padding: '2px 8px',
-                    borderRadius: 'var(--radius-full)',
-                    backgroundColor: localCloudConfig.connected ? 'var(--accent-light)' : 'var(--bg-surface-active)',
-                    color: localCloudConfig.connected ? 'var(--accent-primary)' : 'var(--text-tertiary)',
-                    border: localCloudConfig.connected ? '1px solid var(--accent-border)' : '1px solid var(--border-subtle)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 4
-                  }}>
-                    {localCloudConfig.connected ? <CheckCircle2 size={12} /> : null}
-                    {localCloudConfig.connected ? 'Connected' : 'Disconnected'}
-                  </span>
-                </div>
-
-                {!localCloudConfig.connected ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Google Account Email</label>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <input
-                        type="email"
-                        className="setting-input"
-                        placeholder="user@gmail.com"
-                        value={cloudEmail}
-                        onChange={(e) => setCloudEmail(e.target.value)}
-                      />
-                      <button 
-                        type="button" 
-                        className="btn-primary"
-                        style={{ whiteSpace: 'nowrap', padding: '8px 14px' }}
-                        onClick={handleConnectCloud}
-                      >
-                        Connect Drive
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 4 }}>
-                    <div>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>{localCloudConfig.accountEmail}</div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-tertiary)' }}>
-                        Last Synced: {localCloudConfig.lastSyncedAt ? new Date(localCloudConfig.lastSyncedAt).toLocaleString() : 'Not yet'}
-                      </div>
-                    </div>
-                    <button 
-                      type="button" 
-                      className="btn-secondary"
-                      style={{ fontSize: '0.78rem', color: '#ef4444' }}
-                      onClick={handleDisconnectCloud}
-                    >
-                      Disconnect
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* AES Encryption Security Info Badge */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '8px 12px',
-                backgroundColor: 'var(--accent-light)',
-                border: '1px solid var(--accent-border)',
-                borderRadius: 'var(--radius-sm)',
-                marginBottom: 12,
-                fontSize: '0.78rem',
-                color: 'var(--accent-primary)',
-                fontWeight: 600
-              }}>
-                <Lock size={14} />
-                <span>Client-Side End-to-End Encryption (AES-GCM-256) Active</span>
-              </div>
-
-              {/* Cloud Backup & Restore Controls */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div style={{
-                  backgroundColor: 'var(--bg-app)',
-                  border: '1px solid var(--border-medium)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: 14,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 10
-                }}>
-                  <div style={{ fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <CloudUpload size={16} style={{ color: 'var(--accent-primary)' }} />
-                    <span>Backup to Cloud</span>
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)', flex: 1 }}>
-                    Export current active chat session data into an encrypted Cloud Storage backup package.
-                  </div>
-                  <button 
-                    type="button" 
-                    className="btn-primary" 
-                    style={{ fontSize: '0.8rem', padding: '8px' }}
-                    onClick={handleBackupToCloud}
-                  >
-                    Sync & Download Backup
-                  </button>
-                </div>
-
-                <div style={{
-                  backgroundColor: 'var(--bg-app)',
-                  border: '1px solid var(--border-medium)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: 14,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 10
-                }}>
-                  <div style={{ fontWeight: 600, fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <CloudDownload size={16} style={{ color: 'var(--accent-secondary)' }} />
-                    <span>Restore from Cloud</span>
-                  </div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-tertiary)', flex: 1 }}>
-                    Import and restore your saved conversation package into current session memory.
-                  </div>
-                  <label 
-                    className="btn-secondary" 
-                    style={{ fontSize: '0.8rem', padding: '8px', textAlign: 'center', cursor: 'pointer' }}
-                  >
-                    Import Cloud File
-                    <input 
-                      type="file" 
-                      accept=".json"
-                      style={{ display: 'none' }}
-                      onChange={handleRestoreFromCloud}
-                    />
-                  </label>
-                </div>
               </div>
             </div>
           )}

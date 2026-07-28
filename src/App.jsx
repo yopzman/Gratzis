@@ -6,7 +6,7 @@ import ChatMessage from './components/ChatMessage.jsx';
 import ChatInput from './components/ChatInput.jsx';
 import SettingsModal from './components/SettingsModal.jsx';
 
-import { storageService, defaultSettings, defaultPersonas, defaultCloudConfig } from './services/storageService.js';
+import { storageService, defaultSettings, defaultPersonas } from './services/storageService.js';
 import { aiService } from './services/aiService.js';
 
 import './styles/variables.css';
@@ -47,15 +47,6 @@ export default function App() {
       return Array.isArray(res) && res.length > 0 ? res : defaultPersonas;
     } catch (e) {
       return defaultPersonas;
-    }
-  });
-
-  const [cloudConfig, setCloudConfig] = useState(() => {
-    try {
-      const res = storageService.getCloudConfig();
-      return res && typeof res === 'object' ? res : defaultCloudConfig;
-    } catch (e) {
-      return defaultCloudConfig;
     }
   });
 
@@ -373,28 +364,14 @@ export default function App() {
         onOpenSettings={() => setSettingsOpen(true)}
       />
 
-      {/* Settings Modal */}
       <SettingsModal
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         settings={settings}
         personas={personas}
-        cloudConfig={cloudConfig}
         sessions={sessions}
         onSaveSettings={handleSaveSettings}
         onSavePersonas={handleSavePersonas}
-        onSaveCloudConfig={(cfg) => {
-          setCloudConfig(cfg);
-          storageService.saveCloudConfig(cfg);
-        }}
-        onRestoreSessions={(restoredSessions) => {
-          if (Array.isArray(restoredSessions)) {
-            setSessions(restoredSessions);
-            if (restoredSessions.length > 0) {
-              setActiveSessionId(restoredSessions[0].id);
-            }
-          }
-        }}
       />
     </div>
   );

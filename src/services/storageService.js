@@ -1,5 +1,4 @@
 // Storage service - Sessions use sessionStorage (auto-cleared when tab closes)
-// Cloud Storage Sync handles persistent backups to Google Drive / Cloud
 
 const STORAGE_KEYS = {
   SESSIONS: 'gratzis_ai_chat_sessions_temp',
@@ -7,7 +6,6 @@ const STORAGE_KEYS = {
   SETTINGS: 'gratzis_ai_settings',
   PERSONAS: 'gratzis_ai_personas',
   THEME: 'gratzis_ai_theme',
-  CLOUD_CONFIG: 'gratzis_ai_cloud_config',
 };
 
 // Clean up any old chat history stored in localStorage to prevent local retention
@@ -56,13 +54,6 @@ export const defaultSettings = {
   temperature: 0.7,
   apiKey: '',
   soundEnabled: true,
-};
-
-export const defaultCloudConfig = {
-  provider: 'Google Drive',
-  connected: false,
-  accountEmail: '',
-  lastSyncedAt: null,
 };
 
 export const storageService = {
@@ -143,25 +134,6 @@ export const storageService = {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings || defaultSettings));
     } catch (e) {
       console.error('Failed to save settings:', e);
-    }
-  },
-
-  // Cloud Config Management
-  getCloudConfig: () => {
-    try {
-      const data = localStorage.getItem(STORAGE_KEYS.CLOUD_CONFIG);
-      const parsed = data ? JSON.parse(data) : null;
-      return parsed && typeof parsed === 'object' ? { ...defaultCloudConfig, ...parsed } : defaultCloudConfig;
-    } catch (e) {
-      return defaultCloudConfig;
-    }
-  },
-
-  saveCloudConfig: (config) => {
-    try {
-      localStorage.setItem(STORAGE_KEYS.CLOUD_CONFIG, JSON.stringify(config || defaultCloudConfig));
-    } catch (e) {
-      console.error('Failed to save cloud config:', e);
     }
   },
 
