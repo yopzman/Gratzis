@@ -2,7 +2,6 @@
 
 A modern, fast, and simple AI Chatbot Web Application built with React, Vite, and Vanilla CSS. Featuring Client-Side AES-256-GCM encrypted Cloud Storage Sync.
 
-Created by **yoviekobba** ([@yopzman](https://github.com/yopzman)).
 
 ---
 
@@ -57,3 +56,8 @@ npm run build
 ## 🔒 Security & Privacy
 - **Zero-Local History**: Chat sessions are stored in browser `sessionStorage` and automatically cleared when the browser tab closes.
 - **AES-256-GCM Encryption**: Cloud storage backup files are encrypted client-side using Web Crypto API (`window.crypto.subtle`) with PBKDF2 key derivation.
+
+---
+
+## 📄 License
+This project is licensed under the [MIT License](LICENSE) © 2026 **yoviekobba**.
