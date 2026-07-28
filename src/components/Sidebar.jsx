@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import appLogo from '../../icon.png';
 import { 
   Bot, 
   Plus, 
@@ -63,8 +64,8 @@ export default function Sidebar({
         {/* Sidebar Header */}
         <div className="sidebar-header">
           <div className="app-brand">
-            <div className="welcome-icon-box" style={{ width: 32, height: 32, marginBottom: 0, borderRadius: 8 }}>
-              <Bot size={18} />
+            <div className="welcome-icon-box" style={{ width: 32, height: 32, marginBottom: 0, borderRadius: 8, overflow: 'hidden', padding: 0 }}>
+              <img src={appLogo} alt="Gratzis Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <span>Gratzis ChatBot</span>
           </div>

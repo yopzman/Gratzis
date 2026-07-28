@@ -1,4 +1,5 @@
 import React from 'react';
+import appLogo from '../../icon.png';
 import { 
   Bot, 
   Code, 
@@ -37,8 +38,8 @@ export default function WelcomeScreen({ onSelectPrompt }) {
 
   return (
     <div className="welcome-container animate-fade-in">
-      <div className="welcome-icon-box">
-        <Bot size={32} />
+      <div className="welcome-icon-box" style={{ width: 64, height: 64, borderRadius: 16, overflow: 'hidden', padding: 0 }}>
+        <img src={appLogo} alt="Gratzis Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </div>
 
       <h1 className="welcome-title">Hello, how can I help you today?</h1>

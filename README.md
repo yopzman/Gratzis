@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="icon.png" alt="Gratzis ChatBot Logo" width="96" height="96" style="border-radius: 20px;" />
+</p>
+
 # ⚡ Gratzis ChatBot
 
 A modern, fast, and simple AI Chatbot Web Application built with React, Vite, and Vanilla CSS.
