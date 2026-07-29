@@ -1,66 +1,36 @@
 <p align="center">
-  <img src="icon.png" alt="Gratzis ChatBot Logo" width="96" height="96" style="border-radius: 20px;" />
+  <img src="icon.png" alt="Gratzis Logo" width="96" height="96" style="border-radius: 20px;" />
 </p>
 
-# ⚡ Gratzis ChatBot
+# Gratzis
 
-A modern, fast, and simple AI Chatbot Web Application built with React, Vite, and Vanilla CSS.
+Gratzis is a lightweight AI chatbot web app built with React, Vite, and CSS. Chat history is stored strictly in `sessionStorage`, so session data is automatically cleared when the browser tab closes.
 
-
----
-
-## 🚀 Ready for Vercel Deployment
-
-This project is fully configured for deployment on [Vercel](https://vercel.com).
-
-### Option 1: Deploy via Vercel GitHub Integration (Recommended)
-1. Push this repository to GitHub.
-2. Go to [Vercel Dashboard](https://vercel.com/dashboard) and click **"Add New" -> "Project"**.
-3. Import your GitHub repository `Gratzis`.
-4. Vercel will automatically detect the settings:
-   - **Framework Preset**: Vite
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-   - **Install Command**: `npm install`
-5. Click **Deploy**.
-
-### Option 2: Deploy via Vercel CLI
-If you have Vercel CLI installed locally:
-```bash
-# Install Vercel CLI (if not already installed)
-npm i -g vercel
-
-# Login to your Vercel account
-vercel login
-
-# Deploy to preview
-vercel
-
-# Deploy to production
-vercel --prod
-```
-
----
-
-## 💻 Local Development
+## Development
 
 ```bash
 # Install dependencies
 npm install
 
-# Run dev server
+# Start dev server
 npm run dev
+```
 
-# Build for production
+To build for production:
+
+```bash
 npm run build
 ```
 
----
+## Deployment
 
-## 🔒 Security & Privacy
-- **Zero-Local History**: Chat sessions are stored in browser `sessionStorage` and automatically cleared when the browser tab closes.
+The project is ready for static deployment (e.g. Vercel, Netlify, Cloudflare Pages).
 
----
+For Vercel:
+1. Import the repository in the Vercel dashboard.
+2. Framework settings (`Vite`) and build command (`npm run build`) are detected automatically.
 
-## 📄 License
-This project is licensed under the [MIT License](LICENSE) © 2026 **yoviekobba**.
+## License
+
+[MIT](LICENSE) © 2026 yoviekobba
+
